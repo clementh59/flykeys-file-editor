@@ -17,6 +17,7 @@ import PanGraph from "./Graph/PanGraph"
 import PitchGraph from "./Graph/PitchGraph"
 import VolumeGraph from "./Graph/VolumeGraph"
 import PianoVelocityControl from "./VelocityControl/VelocityControl"
+import HandColorControl from "./ColorControl/ColorControl"
 
 interface ButtonItem {
   label: string
@@ -30,12 +31,8 @@ interface TabBarProps {
 }
 
 export type ControlMode =
-  | "velocity"
-  | "volume"
-  | "pitchBend"
-  | "expression"
-  | "modulation"
-  | "pan"
+  | "hands"
+  | "sections"
 
 const TabButton = styled.div`
   min-width: 8em;
@@ -76,10 +73,8 @@ const TabBar: FC<TabBarProps> = React.memo(({ onClick, selectedMode }) => {
   })
 
   const buttons = [
-    controlButton("Velocity", "velocity"),
-    controlButton("Pitch Bend", "pitchBend"),
-    controlButton("Volume", "volume"),
-    controlButton("Panpot", "pan"),
+    controlButton("Hands", "hands"),
+    controlButton("Sections", "sections")
   ]
 
   return (
@@ -178,47 +173,51 @@ const ControlPane: FC = () => {
 
   const control = (() => {
     switch (mode) {
-      case "velocity":
+      case "hands":
         return (
-          <PianoVelocityControl
-            {...controlProps}
-            changeVelocity={changeVelocity}
-          />
+          <HandColorControl />
         )
-      case "pitchBend":
-        return <PitchGraph {...controlProps} />
-      case "volume":
+      case "sections":
         return <VolumeGraph {...controlProps} />
-      case "pan":
-        return <PanGraph {...controlProps} />
-      case "modulation":
-        return <ModulationGraph {...controlProps} />
-      case "expression":
-        return <ExpressionGraph {...controlProps} />
     }
   })()
 
-  return (
-    <Parent ref={ref}>
-      <TabBar onClick={onSelectTab} selectedMode={mode} />
-      <div className="control-content">
-        {control}
-        <Stage
-          style={{
-            marginLeft: theme.keyWidth,
-            pointerEvents: "none",
-          }}
-          width={controlProps.width}
-          height={controlProps.height}
-          options={{ transparent: true }}
-        >
-          <Container x={-scrollLeft}>
-            <PianoGrid height={controlProps.height} beats={mappedBeats} />
-          </Container>
-        </Stage>
-      </div>
-    </Parent>
-  )
+  // If it's a Hand color control, we don't want to see the piano Grid
+  switch (control.type) {
+    case HandColorControl:
+      return (
+        <Parent ref={ref}>
+          <TabBar onClick={onSelectTab} selectedMode={mode} />
+          <div className="control-content">
+            {control}
+          </div>
+        </Parent>
+      )
+    default:
+      return (
+        <Parent ref={ref}>
+          <TabBar onClick={onSelectTab} selectedMode={mode} />
+          <div className="control-content">
+            {control}
+            <Stage
+              style={{
+                marginLeft: theme.keyWidth,
+                pointerEvents: "none",
+              }}
+              width={controlProps.width}
+              height={controlProps.height}
+              options={{ transparent: true }}
+            >
+              <Container x={-scrollLeft}>
+                <PianoGrid height={controlProps.height} beats={mappedBeats} />
+              </Container>
+            </Stage>
+          </div>
+        </Parent>
+      )
+  }
+
+
 }
 
-export default ControlPane
+export default ControlPane;

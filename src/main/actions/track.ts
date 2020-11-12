@@ -5,7 +5,7 @@ import {
   pitchBendMidiEvent,
   programChangeMidiEvent,
   setTempoMidiEvent,
-  volumeMidiEvent,
+  volumeMidiEvent
 } from "../../common/midi/MidiEvent"
 import { NoteEvent, TrackMidiEvent } from "../../common/track"
 import { ControlMode } from "../components/ControlPane/ControlPane"
@@ -13,8 +13,10 @@ import RootStore from "../stores/RootStore"
 import {
   moveSelectionBy,
   resizeNotesInSelectionLeftBy,
-  resizeNotesInSelectionRightBy,
+  resizeNotesInSelectionRightBy
 } from "./selection"
+import { RightHandColor } from "../Constants"
+import Color from "color"
 
 export const changeTempo = (rootStore: RootStore) => (
   id: number,
@@ -28,7 +30,7 @@ export const changeTempo = (rootStore: RootStore) => (
   }
   rootStore.pushHistory()
   track.updateEvent(id, {
-    microsecondsPerBeat: microsecondsPerBeat,
+    microsecondsPerBeat: microsecondsPerBeat
   })
 }
 
@@ -39,7 +41,7 @@ export const createTempo = (rootStore: RootStore) => (
   const {
     song,
     services: { quantizer },
-    pushHistory,
+    pushHistory
   } = rootStore
 
   const track = song.conductorTrack
@@ -49,7 +51,7 @@ export const createTempo = (rootStore: RootStore) => (
   rootStore.pushHistory()
   const e = {
     ...setTempoMidiEvent(0, Math.round(microsecondsPerBeat)),
-    tick: quantizer.round(tick),
+    tick: quantizer.round(tick)
   }
   track.createOrUpdate(e)
 }
@@ -70,7 +72,30 @@ export const changeNotesVelocity = (rootStore: RootStore) => (
   selectedTrack.updateEvents(
     noteIds.map((id) => ({
       id,
-      velocity: velocity,
+      velocity: velocity
+    }))
+  )
+}
+
+/**
+ * Change the color of the notes passed in parameter
+ * @param rootStore
+ */
+export const changeNoteColor = (rootStore: RootStore) => (
+  noteIds: number[],
+  color: Color
+) => {
+  const { song } = rootStore
+
+  const selectedTrack = song.selectedTrack
+  if (selectedTrack === undefined) {
+    return
+  }
+  rootStore.pushHistory()
+  selectedTrack.updateEvents(
+    noteIds.map((id) => ({
+      id,
+      color: color,
     }))
   )
 }
@@ -82,7 +107,7 @@ const createEvent = (rootStore: RootStore) => <T extends TrackMidiEvent>(
   const {
     song,
     pushHistory,
-    services: { quantizer, player },
+    services: { quantizer, player }
   } = rootStore
 
   const selectedTrack = song.selectedTrack
@@ -92,7 +117,7 @@ const createEvent = (rootStore: RootStore) => <T extends TrackMidiEvent>(
   rootStore.pushHistory()
   selectedTrack.createOrUpdate({
     ...e,
-    tick: quantizer.round(tick ?? player.position),
+    tick: quantizer.round(tick ?? player.position)
   })
 }
 
@@ -109,14 +134,6 @@ export const createVolume = (rootStore: RootStore) => (
   tick?: number
 ) => {
   const e = volumeMidiEvent(0, 0, Math.round(value))
-  createEvent(rootStore)(e, tick)
-}
-
-export const createPan = (rootStore: RootStore) => (
-  value: number,
-  tick?: number
-) => {
-  const e = panMidiEvent(0, 0, Math.round(value))
   createEvent(rootStore)(e, tick)
 }
 
@@ -143,18 +160,10 @@ export const createControlEvent = (rootStore: RootStore) => (
 ) => {
   const action = (() => {
     switch (mode) {
-      case "volume":
+      case "hands":
         return createVolume
-      case "pitchBend":
-        return createPitchBend
-      case "pan":
-        return createPan
-      case "modulation":
-        return createModulation
-      case "expression":
-        return createExpression
-      case "velocity":
-        throw new Error("invalid type")
+      case "sections":
+        return createVolume
     }
   })()
   action(rootStore)(value, tick)
@@ -181,7 +190,7 @@ export const createNote = (rootStore: RootStore) => (
     song,
     pianoRollStore,
     services: { player, quantizer },
-    pushHistory,
+    pushHistory
   } = rootStore
   const selectedTrack = song.selectedTrack
   if (selectedTrack === undefined || selectedTrack.channel == undefined) {
@@ -198,15 +207,16 @@ export const createNote = (rootStore: RootStore) => (
     type: "channel",
     subtype: "note",
     noteNumber: noteNumber,
+    color: rootStore.settingsStore.defaultNoteColor,
     tick,
     velocity: 127,
-    duration: pianoRollStore.lastNoteDuration || quantizer.unit,
+    duration: pianoRollStore.lastNoteDuration || quantizer.unit
   }
   const added = selectedTrack.addEvent(note)
 
   player.playNote({
     ...note,
-    channel: selectedTrack.channel,
+    channel: selectedTrack.channel
   })
   return added.id
 }
@@ -221,7 +231,7 @@ export const moveNote = (rootStore: RootStore) => (
 ) => {
   const {
     song,
-    services: { player, quantizer },
+    services: { player, quantizer }
   } = rootStore
 
   const selectedTrack = song.selectedTrack
@@ -236,14 +246,14 @@ export const moveNote = (rootStore: RootStore) => (
   if (pitchChanged || tickChanged) {
     moveSelectionBy(rootStore)({
       tick: tick - note.tick,
-      noteNumber: params.noteNumber - note.noteNumber,
+      noteNumber: params.noteNumber - note.noteNumber
     })
 
     if (pitchChanged) {
       player.playNote({
         ...note,
         noteNumber: params.noteNumber,
-        channel: selectedTrack.channel,
+        channel: selectedTrack.channel
       })
     }
   }
@@ -255,7 +265,7 @@ export const resizeNoteLeft = (rootStore: RootStore) => (
   const {
     song,
     pianoRollStore,
-    services: { quantizer },
+    services: { quantizer }
   } = rootStore
   const selectedTrack = song.selectedTrack
   if (selectedTrack === undefined) {
@@ -279,7 +289,7 @@ export const resizeNoteRight = (rootStore: RootStore) => (
   const {
     song,
     pianoRollStore,
-    services: { quantizer },
+    services: { quantizer }
   } = rootStore
   const selectedTrack = song.selectedTrack
   if (selectedTrack === undefined) {
@@ -315,7 +325,7 @@ export const setTrackVolume = (rootStore: RootStore) => (
   const {
     song,
     pushHistory,
-    services: { player },
+    services: { player }
   } = rootStore
 
   rootStore.pushHistory()
@@ -334,7 +344,7 @@ export const setTrackPan = (rootStore: RootStore) => (
   const {
     song,
     pushHistory,
-    services: { player },
+    services: { player }
   } = rootStore
 
   rootStore.pushHistory()
@@ -353,7 +363,7 @@ export const setTrackInstrument = (rootStore: RootStore) => (
   const {
     song,
     pushHistory,
-    services: { player },
+    services: { player }
   } = rootStore
 
   rootStore.pushHistory()

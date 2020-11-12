@@ -147,7 +147,7 @@ const PianoRollWrapper: FC = () => {
 
   return (
     <Parent ref={ref}>
-      <SplitPane split="horizontal" minSize={50} defaultSize={"60%"}>
+      <SplitPane split="horizontal" minSize={50} defaultSize={"80%"}>
         <Alpha onWheel={onWheel} ref={alphaRef}>
           <PianoRollStage width={size.width} />
           <VerticalScrollBar

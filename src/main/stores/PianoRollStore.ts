@@ -14,7 +14,7 @@ export default class PianoRollStore {
   @observable scrollTop = 700 // 中央くらいの音程にスクロールしておく
   @observable controlHeight = 0
   @observable notesCursor = "auto"
-  @observable controlMode: ControlMode = "velocity"
+  @observable controlMode: ControlMode = "hands"
   @observable mouseMode: PianoRollMouseMode = "pencil"
   @observable scaleX = 1
   @observable scaleY = 1

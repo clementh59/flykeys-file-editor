@@ -1,7 +1,7 @@
 import { List, ListItem, ListItemText } from "@material-ui/core"
 import React, { ChangeEvent, FC } from "react"
 import { localized } from "../../../common/localize/localizedString"
-import { createSong, openSong, saveSong } from "../../actions"
+import { createSong, openMidiSong, saveFlyKeysFile, saveMidiSong } from "../../actions"
 import { useStores } from "../../hooks/useStores"
 import { ListHeader } from "./Drawer"
 
@@ -32,8 +32,12 @@ export const SongList: FC = () => {
     }
   }
   const onClickOpen = (e: ChangeEvent<HTMLInputElement>) =>
-    openSong(rootStore)(e.currentTarget)
-  const onClickSave = () => saveSong(rootStore)()
+    openMidiSong(rootStore)(e.currentTarget)
+  const onClickSaveMIDIFormat = () => saveMidiSong(rootStore)()
+  const onClickSaveFlyKeysFormat = () => {
+    console.log("I save the file to a FlyKeys file!");
+    saveFlyKeysFile(rootStore)();
+  }
   return (
     <List>
       <ListHeader>{localized("file", "File")}</ListHeader>
@@ -48,9 +52,14 @@ export const SongList: FC = () => {
         </ListItem>
       </FileInput>
 
-      <ListItem button onClick={onClickSave}>
-        <ListItemText primary={localized("save-song", "Save")} />
+      <ListItem button onClick={onClickSaveMIDIFormat}>
+        <ListItemText primary={localized("save-song-midi", "Save as MIDI")} />
       </ListItem>
+
+      <ListItem button onClick={onClickSaveFlyKeysFormat}>
+        <ListItemText primary={localized("save-song-flykeys", "Save as .FLKS")} />
+      </ListItem>
+
     </List>
   )
 }

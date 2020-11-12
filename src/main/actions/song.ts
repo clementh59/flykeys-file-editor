@@ -1,11 +1,13 @@
 import { toJS } from "mobx"
 import {
-  read as readSong,
-  write as writeSong,
+  readMidi,
+  writeMidi
 } from "../../common/midi/SongFile"
 import Song, { emptySong } from "../../common/song"
 import { emptyTrack } from "../../common/track"
 import RootStore from "../stores/RootStore"
+import Color from "color"
+import { writeFlyKeys } from "../../common/flykeys/FlykeysFile"
 
 const openSongFile = (
   input: HTMLInputElement,
@@ -24,7 +26,7 @@ const openSongFile = (
       return
     }
     const buf = e.target.result as ArrayBuffer
-    const song = readSong(new Uint8Array(buf))
+    const song = readMidi(new Uint8Array(buf))
     callback(song)
   }
 
@@ -50,13 +52,13 @@ export const createSong = (rootStore: RootStore) => () => {
   setSong(store, emptySong())
 }
 
-export const saveSong = (rootStore: RootStore) => () => {
+export const saveMidiSong = (rootStore: RootStore) => () => {
   const { song } = rootStore
 
-  writeSong(toJS(song.tracks, { recurseEverything: true }), song.filepath)
+  writeMidi(toJS(song.tracks, { recurseEverything: true }), song.filepath)
 }
 
-export const openSong = (rootStore: RootStore) => (input: HTMLInputElement) => {
+export const openMidiSong = (rootStore: RootStore) => (input: HTMLInputElement) => {
   const store = rootStore
 
   openSongFile(input, (song) => {
@@ -65,6 +67,11 @@ export const openSong = (rootStore: RootStore) => (input: HTMLInputElement) => {
     }
     setSong(store, song)
   })
+}
+
+export const saveFlyKeysFile = (rootStore: RootStore) => () => {
+  const {song} = rootStore;
+  writeFlyKeys(toJS(song.tracks, { recurseEverything: true }), song.filepath)
 }
 
 export const addTrack = (rootStore: RootStore) => () => {

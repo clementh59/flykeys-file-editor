@@ -1,6 +1,7 @@
 import { NoteOffEvent, NoteOnEvent } from "midifile-ts"
 import { noteOffMidiEvent, noteOnMidiEvent } from "../midi/MidiEvent"
 import { NoteEvent, TickProvider } from "../track"
+import { RightHandColor } from "../../main/Constants"
 
 /**
 
@@ -40,6 +41,7 @@ export function assemble<T>(
               id: -1,
               tick: noteOn.tick,
               duration: e.tick - noteOn.tick,
+              color: RightHandColor
             }
             result.push(note)
           }

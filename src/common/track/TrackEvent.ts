@@ -29,6 +29,7 @@ import {
   UnknownMetaEvent,
 } from "midifile-ts"
 import { RPNEvent } from "../helpers/RPNAssembler"
+import Color from "color"
 
 export interface TickProvider {
   tick: number
@@ -47,6 +48,7 @@ export type NoteEvent = TrackEventRequired &
     duration: number
     noteNumber: number
     velocity: number
+    color: Color
   }
 
 export type TrackMidiEvent =

@@ -3,12 +3,14 @@ import isEqual from "lodash/isEqual"
 import { Graphics as PIXIGraphics, Rectangle } from "pixi.js"
 import React, { FC } from "react"
 import { IRect } from "../../../../common/geometry"
+import Color from "color"
 
 export type PianoNoteItem = IRect & {
   id: number
   velocity: number
   isSelected: boolean
   isDrum: boolean
+  color: Color
 }
 
 export interface PianoNoteProps {
@@ -45,7 +47,7 @@ const _PianoNote: FC<PianoNoteProps> = (props) => {
 
   const render = (g: PIXIGraphics) => {
     const alpha = item.velocity / 127
-    const noteColor = item.isSelected ? props.selectedColor : props.color
+    const noteColor = item.isSelected ? props.selectedColor : item.color.rgbNumber();
     let { width, height } = item
 
     width = Math.round(width - 1) // 次のノートと被らないように小さくする
@@ -64,6 +66,7 @@ const _PianoNote: FC<PianoNoteProps> = (props) => {
   const renderDrumNote = (g: PIXIGraphics) => {
     const alpha = item.velocity / 127
     const noteColor = item.isSelected ? props.selectedColor : props.color
+    console.log("renderDrumNote "+noteColor);
     const radius = Math.round(item.height / 2)
 
     g.clear()

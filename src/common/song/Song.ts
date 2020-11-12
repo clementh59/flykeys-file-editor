@@ -1,7 +1,7 @@
 import pullAt from "lodash/pullAt"
 import { action, autorun, computed, observable, transaction } from "mobx"
 import { list, object, serializable } from "serializr"
-import { TIME_BASE } from "../../main/Constants"
+import { RightHandColor, TIME_BASE } from "../../main/Constants"
 import { isNotUndefined } from "../helpers/array"
 import { Measure } from "../measure/Measure"
 import { getMeasuresFromConductorTrack } from "../measure/MeasureList"

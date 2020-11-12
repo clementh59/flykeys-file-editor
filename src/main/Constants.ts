@@ -1,3 +1,5 @@
+import Color from "color"
+
 export const TIME_BASE = 480
 
 export const QuantizeOptions = [
@@ -67,3 +69,6 @@ export const QuantizeOptions = [
     value: 48,
   },
 ]
+
+export const RightHandColor = Color("#1aef1b");
+export const LeftHandColor = Color("#18b2ff");

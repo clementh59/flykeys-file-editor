@@ -58,22 +58,25 @@ const PianoNotes: FC<PianoNotesProps> = ({ trackId, width, isGhost }) => {
             velocity: isGhost ? 127 : e.velocity, // draw opaque when ghost
             isSelected,
             isDrum: isRhythmTrack,
+            color: e.color,
           }
         }
       ),
     [events, transform, scrollLeft, width, selection, isGhost, isRhythmTrack]
   )
 
-  const items = useRecycle(notes).map((item) => (
-    <PianoNote
-      key={item.key}
-      item={item.value}
-      color={color}
-      borderColor={borderColor}
-      selectedColor={selectedColor}
-      selectedBorderColor={selectedBorderColor}
-    />
-  ))
+  const items = useRecycle(notes).map((item) => {
+    return (
+      <PianoNote
+        key={item.key}
+        item={item.value}
+        color={color}
+        borderColor={borderColor}
+        selectedColor={selectedColor}
+        selectedBorderColor={selectedBorderColor}
+      />
+    );
+  });
 
   return <Container>{items}</Container>
 }
