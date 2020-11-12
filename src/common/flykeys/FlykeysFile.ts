@@ -2,6 +2,7 @@ import Track, { isNoteEvent, NoteEvent } from "../track"
 import { write as writeBytes } from "../midi/MidiFileWriter"
 import { downloadBlob } from "../helpers/Downloader"
 import Color from "color"
+import { LeftHandColor, RightHandColor } from "../../main/Constants"
 
 export function writeFlyKeys(tracks: Track[], filepath: string) {
   filepath = filepath.replace(".mid",".txt");
@@ -62,5 +63,8 @@ function getScale(ticks: number[]) {
  * @return {string} The string corresponding to the color (e.g "MG", "MD", ...)
  */
 function getStringFromColor(color:Color){
-  return "MD";
+  if (color===RightHandColor)
+    return "MD";
+  if (color===LeftHandColor)
+    return "MG";
 }
