@@ -1,4 +1,4 @@
-import { AnyEvent, read as readMidi, StreamSource } from "midifile-ts"
+import { AnyEvent, NoteOnEvent, read as readMidi, StreamSource } from "midifile-ts"
 import { toTrackEvents } from "../helpers/toTrackEvents"
 import Track, { conductorTrack, emptyTrack } from "../track"
 import Song from "./Song"

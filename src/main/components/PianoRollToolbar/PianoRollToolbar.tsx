@@ -14,6 +14,8 @@ import QuantizeSelector from "./QuantizeSelector/QuantizeSelector"
 import { StyledToggleButton, ToolSelector } from "./ToolSelector"
 import { TrackNameInput } from "./TrackNameInput"
 import { VolumeSlider } from "./VolumeSlider"
+import Box from "@material-ui/core/Box"
+import { simplifyMidi } from "../../actions"
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -70,6 +72,10 @@ export const PianoRollToolbar: FC = () => {
 
   const classes = useStyles({})
 
+  const onClickSimplifyMIDI = () => {
+    simplifyMidi(stores)();
+  };
+
   if (track === undefined) {
     return <></>
   }
@@ -96,6 +102,17 @@ export const PianoRollToolbar: FC = () => {
         <StyledToggleButton
           onClick={onClickAutoScroll}
           selected={autoScroll}
+          value="autoScroll"
+          title={localized("auto-scroll", "Auto-Scroll")}
+        >
+          <AutoScrollIcon />
+        </StyledToggleButton>
+
+        <Box marginLeft={2}/>
+
+        <StyledToggleButton
+          onClick={onClickSimplifyMIDI}
+          selected={false}
           value="autoScroll"
           title={localized("auto-scroll", "Auto-Scroll")}
         >

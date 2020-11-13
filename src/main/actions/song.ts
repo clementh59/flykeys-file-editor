@@ -1,15 +1,16 @@
 import { toJS } from "mobx"
 import {
+  readFlykeys,
   readMidi,
   writeMidi
 } from "../../common/midi/SongFile"
 import Song, { emptySong } from "../../common/song"
-import { emptyTrack } from "../../common/track"
+import { emptyTrack, isNoteEvent } from "../../common/track"
 import RootStore from "../stores/RootStore"
 import Color from "color"
-import { writeFlyKeys } from "../../common/flykeys/FlykeysFile"
+import { writeFlyKeys } from "../../common/flykeys/FlykeysFileFactory"
 
-const openSongFile = (
+const readImportMidiFile = (
   input: HTMLInputElement,
   callback: (song: Song | null) => void
 ) => {
@@ -31,6 +32,30 @@ const openSongFile = (
   }
 
   reader.readAsArrayBuffer(file)
+}
+
+const readImportFlykeysFile = (
+  input: HTMLInputElement,
+  callback: (song: Song | null) => void
+) => {
+  if (input.files === null || input.files.length === 0) {
+    return
+  }
+
+  const file = input.files[0]
+  const reader = new FileReader()
+
+  reader.onload = (e) => {
+    if (e.target == null) {
+      callback(null)
+      return
+    }
+    const buf = e.target.result as string
+    const song = readFlykeys(buf)
+    callback(song)
+  }
+
+  reader.readAsText(file)
 }
 
 export const setSong = (rootStore: RootStore, song: Song) => {
@@ -61,7 +86,18 @@ export const saveMidiSong = (rootStore: RootStore) => () => {
 export const openMidiSong = (rootStore: RootStore) => (input: HTMLInputElement) => {
   const store = rootStore
 
-  openSongFile(input, (song) => {
+  readImportMidiFile(input, (song) => {
+    if (song === null) {
+      return
+    }
+    setSong(store, song)
+  })
+}
+
+export const openFlykeysFile = (rootStore: RootStore) => (input: HTMLInputElement) => {
+  const store = rootStore
+
+  readImportFlykeysFile(input, (song) => {
     if (song === null) {
       return
     }
@@ -71,7 +107,7 @@ export const openMidiSong = (rootStore: RootStore) => (input: HTMLInputElement) 
 
 export const saveFlyKeysFile = (rootStore: RootStore) => () => {
   const {song} = rootStore;
-  writeFlyKeys(toJS(song.tracks, { recurseEverything: true }), song.filepath)
+  writeFlyKeys(toJS(song.tracks, { recurseEverything: true }), song)
 }
 
 export const addTrack = (rootStore: RootStore) => () => {
@@ -93,8 +129,42 @@ export const removeTrack = (rootStore: RootStore) => (trackId: number) => {
   store.song.removeTrack(trackId)
 }
 
+export const changeTrackColor = (rootStore: RootStore) => (trackId: number, color: Color) => {
+  const store = rootStore
+
+  store.pushHistory()
+  store.song.updateTrackColor(trackId,color);
+}
+
 export const selectTrack = (rootStore: RootStore) => (trackId: number) => {
   const { song } = rootStore
 
   song.selectTrack(trackId)
+}
+
+export const simplifyMidi = (rootStore: RootStore) => () => {
+  const { song } = rootStore;
+  //todo: si la division donne pas un entier : problem...
+  //todo: /4 à la place? Pour avoir plus de flexibilité?
+  //todo: test function
+  const minimumTick = song.timebase/4;
+  console.log(song.timebase);
+  song.tracks.forEach((track)=>{
+    track.events.filter(isNoteEvent).forEach((note)=>{
+      const tickRemainder = note.tick%minimumTick;
+      const durationRemainder = note.duration%minimumTick;
+      if (tickRemainder!=0){
+        if (tickRemainder>minimumTick/2)
+          note.tick += minimumTick-tickRemainder;
+        else
+          note.tick -= tickRemainder;
+      }
+      if (durationRemainder!=0){
+        if (durationRemainder>minimumTick/2)
+          note.duration += minimumTick-durationRemainder;
+        else
+          note.duration -= durationRemainder;
+      }
+    });
+  });
 }

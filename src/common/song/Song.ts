@@ -5,7 +5,8 @@ import { RightHandColor, TIME_BASE } from "../../main/Constants"
 import { isNotUndefined } from "../helpers/array"
 import { Measure } from "../measure/Measure"
 import { getMeasuresFromConductorTrack } from "../measure/MeasureList"
-import Track from "../track"
+import Track, { isNoteEvent } from "../track"
+import Color from "color"
 
 const END_MARGIN = 480 * 30
 
@@ -65,6 +66,14 @@ export default class Song {
       pullAt(this.tracks, id)
       this.selectTrack(Math.min(id, this.tracks.length - 1))
       this._updateEndOfSong()
+    })
+  }
+
+  @action updateTrackColor(id: number, color: Color) {
+    transaction(() => {
+      this.tracks[id].events.filter(isNoteEvent).forEach((note)=>{
+        note.color = color;
+      });
     })
   }
 

@@ -1,8 +1,7 @@
-import React, { FC, useCallback, useMemo } from "react"
+import React, { FC } from "react"
 import styled from "styled-components"
 import HandColorItem from "./ColorItem"
 import { LeftHandColor, RightHandColor } from "../../../Constants"
-import { useStores } from "../../../hooks/useStores"
 
 export interface HandColorControlProps {}
 
@@ -23,13 +22,13 @@ const HandColorControl: FC<HandColorControlProps> = ({}: HandColorControlProps) 
         id={1}
         selected={true}
         color={LeftHandColor}
-        text="Main droite"
+        text="Main gauche"
       />
       <HandColorItem
         id={1}
         selected={false}
         color={RightHandColor}
-        text="Main gauche"
+        text="Main droite"
       />
     </Parent>
   )

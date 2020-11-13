@@ -5,15 +5,16 @@ import React, { FC } from "react"
 import styled from "styled-components"
 import { localized } from "../../../../common/localize/localizedString"
 import {
-  addTrack,
+  addTrack, changeTrackColor,
   removeTrack,
   selectTrack,
   toggleMuteTrack,
-  toggleSoloTrack,
+  toggleSoloTrack
 } from "../../../actions"
 import { useStores } from "../../../hooks/useStores"
 import { ListHeader } from "../Drawer"
 import TrackListItem, { TrackListItemData } from "./TrackListItem"
+import { LeftHandColor, RightHandColor } from "../../../Constants"
 
 const AddTrackListIcon = styled(ListItemIcon)`
   min-width: auto;
@@ -60,6 +61,8 @@ export const TrackList: FC = () => {
   const onClickMute = (trackId: number) => toggleMuteTrack(stores)(trackId)
   const onClickSolo = (trackId: number) => toggleSoloTrack(stores)(trackId)
   const onClickDelete = (trackId: number) => removeTrack(stores)(trackId)
+  const onClickSetMainDroite = (trackId: number) => changeTrackColor(stores)(trackId, RightHandColor)
+  const onClickSetMainGauche = (trackId: number) => changeTrackColor(stores)(trackId, LeftHandColor)
   const onClickAddTrack = () => addTrack(stores)()
   // onChangeName={e => dispatch(SET_TRACK_NAME, { name: e.target.value })},
   const onSelectTrack = (trackId: number) => {
@@ -79,6 +82,8 @@ export const TrackList: FC = () => {
       onClickSolo={() => onClickSolo(t.index)}
       onClickMute={() => onClickMute(t.index)}
       onClickDelete={() => onClickDelete(t.index)}
+      onClickSetMainDroite={() => onClickSetMainDroite(t.index)}
+      onClickSetMainGauche={() => onClickSetMainGauche(t.index)}
     />
   ))
 

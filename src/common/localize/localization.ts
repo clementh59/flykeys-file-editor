@@ -80,6 +80,7 @@ export default {
     file: "Fichier",
     "new-song": "Nouvelle musique",
     "open-song": "Importer un fichier",
+    "open-song-flykeys": "Importer un fichier FlyKeys",
     "save-song-midi": "Enregistrer au format MIDI",
     "save-song-flykeys": "Enregistrer au format Flykeys",
     tracks: "Pistes",

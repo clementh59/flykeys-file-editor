@@ -21,6 +21,8 @@ export type TrackListItemProps = TrackListItemData & {
   onClickSolo: () => void
   onClickMute: () => void
   onClickDelete: () => void
+  onClickSetMainDroite: () => void
+  onClickSetMainGauche: () => void
 }
 
 const Container = styled(ListItem)`
@@ -40,6 +42,8 @@ const TrackListItem: FC<TrackListItemProps> = ({
   pan,
   onClick,
   onClickDelete,
+  onClickSetMainDroite,
+  onClickSetMainGauche,
   onClickSolo,
   onClickMute,
 }) => {
@@ -52,7 +56,7 @@ const TrackListItem: FC<TrackListItemProps> = ({
       onClick={onClick}
       onContextMenu={onContextMenu}
     >
-      <TrackListContextMenu onClickDelete={onClickDelete} {...menuProps} />
+      <TrackListContextMenu onClickDelete={onClickDelete} onClickMainDroite={onClickSetMainDroite} onClickMainGauche={onClickSetMainGauche} {...menuProps} />
       <div className="TrackListItem">
         <div className="label">
           <div className="name">{name}</div>

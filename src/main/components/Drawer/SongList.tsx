@@ -1,11 +1,12 @@
 import { List, ListItem, ListItemText } from "@material-ui/core"
 import React, { ChangeEvent, FC } from "react"
 import { localized } from "../../../common/localize/localizedString"
-import { createSong, openMidiSong, saveFlyKeysFile, saveMidiSong } from "../../actions"
+import { createSong, openFlykeysFile, openMidiSong, saveFlyKeysFile, saveMidiSong } from "../../actions"
 import { useStores } from "../../hooks/useStores"
 import { ListHeader } from "./Drawer"
 
 const fileInputID = "OpenButtonInputFile"
+const flykeysFileInputID = "OpenFlykeysButtonInputFile"
 
 const FileInput: FC<{
   onChange: (e: ChangeEvent<HTMLInputElement>) => void
@@ -22,6 +23,21 @@ const FileInput: FC<{
   </>
 )
 
+const FileInputFlykeysFiles: FC<{
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void
+}> = ({ onChange, children }) => (
+  <>
+    <input
+      accept=".txt, .flks"
+      style={{ display: "none" }}
+      id={flykeysFileInputID}
+      type="file"
+      onChange={onChange}
+    />
+    <label htmlFor={flykeysFileInputID}>{children}</label>
+  </>
+)
+
 export const SongList: FC = () => {
   const { rootStore } = useStores()
   const onClickNew = () => {
@@ -33,11 +49,10 @@ export const SongList: FC = () => {
   }
   const onClickOpen = (e: ChangeEvent<HTMLInputElement>) =>
     openMidiSong(rootStore)(e.currentTarget)
+  const onClickOpenFlykeys = (e: ChangeEvent<HTMLInputElement>) =>
+    openFlykeysFile(rootStore)(e.currentTarget)
   const onClickSaveMIDIFormat = () => saveMidiSong(rootStore)()
-  const onClickSaveFlyKeysFormat = () => {
-    console.log("I save the file to a FlyKeys file!");
-    saveFlyKeysFile(rootStore)();
-  }
+  const onClickSaveFlyKeysFormat = () => saveFlyKeysFile(rootStore)();
   return (
     <List>
       <ListHeader>{localized("file", "File")}</ListHeader>
@@ -51,6 +66,12 @@ export const SongList: FC = () => {
           <ListItemText primary={localized("open-song", "Open")} />
         </ListItem>
       </FileInput>
+
+      <FileInputFlykeysFiles onChange={onClickOpenFlykeys}>
+        <ListItem button>
+          <ListItemText primary={localized("open-song-flykeys", "Open Flykeys file")} />
+        </ListItem>
+      </FileInputFlykeysFiles>
 
       <ListItem button onClick={onClickSaveMIDIFormat}>
         <ListItemText primary={localized("save-song-midi", "Save as MIDI")} />

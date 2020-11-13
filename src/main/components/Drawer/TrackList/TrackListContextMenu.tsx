@@ -36,6 +36,8 @@ export interface TrackListContextMenuProps {
   isOpen: boolean
   position: IPoint
   onClickDelete: () => void
+  onClickMainDroite: () => void
+  onClickMainGauche: () => void
   handleClose: () => void
 }
 
@@ -43,6 +45,8 @@ export const TrackListContextMenu: FC<TrackListContextMenuProps> = ({
   isOpen,
   position,
   onClickDelete,
+  onClickMainDroite,
+  onClickMainGauche,
   handleClose,
 }) => {
   return (
@@ -53,6 +57,24 @@ export const TrackListContextMenu: FC<TrackListContextMenuProps> = ({
       anchorReference="anchorPosition"
       anchorPosition={{ top: position.y, left: position.x }}
     >
+      <MenuItem
+        onClick={(e) => {
+          e.stopPropagation()
+          onClickMainDroite()
+          handleClose()
+        }}
+      >
+        C'est la main droite
+      </MenuItem>
+      <MenuItem
+        onClick={(e) => {
+          e.stopPropagation()
+          onClickMainGauche()
+          handleClose()
+        }}
+      >
+        C'est la main gauche
+      </MenuItem>
       <MenuItem
         onClick={(e) => {
           e.stopPropagation()

@@ -24,7 +24,7 @@ const PianoNotes: FC<PianoNotesProps> = ({ trackId, width, isGhost }) => {
   const { rootStore } = useStores()
 
   const { events, isRhythmTrack } = useObserver(() => {
-    const track = rootStore.song.tracks[trackId]
+    const track = rootStore.song.tracks[trackId];
     return {
       events: [...track?.events] ?? [], // create new object to fire useMemo update
       isRhythmTrack: track?.isRhythmTrack ?? false,
