@@ -6,7 +6,6 @@ import { useStores } from "../../hooks/useStores"
 import { ArrangeEditor } from "../ArrangeEditor/ArrangeEditor"
 import { BuildInfo } from "../BuildInfo"
 import { HelpDialog } from "../Help/HelpDialog"
-import { MIDIDeviceDialog } from "../MIDIDeviceView/MIDIDeviceDialog"
 import { PianoRollEditor } from "../PianoRoll/PianoRollEditor"
 import { SettingsView } from "../SettingsView/SettingsView"
 import { TempoEditor } from "../TempoGraph/TempoEditor"
@@ -39,6 +38,5 @@ export const RootView: FC = () => (
     <TransportPanel />
     <BuildInfo />
     <HelpDialog />
-    <MIDIDeviceDialog />
   </Container>
 )
