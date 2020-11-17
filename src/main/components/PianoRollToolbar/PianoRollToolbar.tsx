@@ -1,8 +1,8 @@
-import { AppBar, IconButton, Toolbar } from "@material-ui/core"
+import { AppBar, IconButton, TextField, Toolbar } from "@material-ui/core"
 import { KeyboardTab, Menu as MenuIcon } from "@material-ui/icons"
 import { makeStyles } from "@material-ui/styles"
 import { useObserver } from "mobx-react-lite"
-import React, { FC, useCallback } from "react"
+import React, { ChangeEvent, FC, useCallback, useState } from "react"
 import styled from "styled-components"
 import { localized } from "../../../common/localize/localizedString"
 import { useStores } from "../../hooks/useStores"
@@ -42,6 +42,8 @@ const NavBackButton = styled(IconButton)`
 export const PianoRollToolbar: FC = () => {
   const { rootStore: stores } = useStores()
 
+  const [scale, setScale] = useState(4);
+
   const { trackName, autoScroll, track, trackId, quantize } = useObserver(
     () => ({
       trackName: stores.song.selectedTrack?.displayName ?? "",
@@ -72,8 +74,16 @@ export const PianoRollToolbar: FC = () => {
 
   const classes = useStyles({})
 
-  const onClickSimplifyMIDI = () => {
-    simplifyMidi(stores)();
+  const onScaleChange = (text:ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    try {
+      setScale(parseInt(text.target.value));
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  const onClickSimplifyMIDI = (scale:number) => {
+    simplifyMidi(stores)(scale);
   };
 
   if (track === undefined) {
@@ -110,11 +120,15 @@ export const PianoRollToolbar: FC = () => {
 
         <Box marginLeft={2}/>
 
+        <TextField id="outlined-basic" label="Scale" variant="outlined" onChange={onScaleChange} defaultValue={scale}/>
+
+        <Box marginLeft={2}/>
+
         <StyledToggleButton
-          onClick={onClickSimplifyMIDI}
+          onClick={()=>onClickSimplifyMIDI(scale)}
           selected={false}
           value="autoScroll"
-          title={localized("auto-scroll", "Auto-Scroll")}
+          title={"simplify midi"}
         >
           <AutoScrollIcon />
         </StyledToggleButton>

@@ -142,13 +142,15 @@ export const selectTrack = (rootStore: RootStore) => (trackId: number) => {
   song.selectTrack(trackId)
 }
 
-export const simplifyMidi = (rootStore: RootStore) => () => {
+/**
+ * Rempli les trous du midi pour un affichage plus propore pour les leds
+ * @param scale : by how many I divide the timebase
+ */
+export const simplifyMidi = (rootStore: RootStore) => (scale:number) => {
   const { song } = rootStore;
-  //todo: si la division donne pas un entier : problem...
-  //todo: /4 à la place? Pour avoir plus de flexibilité?
-  //todo: test function
-  const minimumTick = song.timebase/4;
-  console.log(song.timebase);
+  //note: Changer le minimumTick ici pour influer sur
+  const minimumTick = song.timebase/scale;
+  console.log("I simplify with the scale : " + minimumTick);
   song.tracks.forEach((track)=>{
     track.events.filter(isNoteEvent).forEach((note)=>{
       const tickRemainder = note.tick%minimumTick;
@@ -165,6 +167,8 @@ export const simplifyMidi = (rootStore: RootStore) => () => {
         else
           note.duration -= durationRemainder;
       }
+      if (note.duration==0)
+        note.duration = minimumTick;
     });
   });
 }
