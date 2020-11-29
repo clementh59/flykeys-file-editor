@@ -107,7 +107,8 @@ export const openFlykeysFile = (rootStore: RootStore) => (input: HTMLInputElemen
 
 export const saveFlyKeysFile = (rootStore: RootStore) => () => {
   const {song} = rootStore;
-  writeFlyKeys(toJS(song.tracks, { recurseEverything: true }), song)
+  const oneTickToMs = rootStore.services.player.tickToMillisec(1);
+  writeFlyKeys(toJS(song.tracks, { recurseEverything: true }), song, oneTickToMs)
 }
 
 export const addTrack = (rootStore: RootStore) => () => {

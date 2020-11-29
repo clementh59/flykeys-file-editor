@@ -58,11 +58,11 @@ export function songFromFlykeys(data: string) {
 
 /*************      WRITE     *****************/
 
-export function writeFlyKeys(tracks: Track[], song: Song) {
+export function writeFlyKeys(tracks: Track[], song: Song, oneTickToMs: number) {
   const filepath = song.filepath.replace(".mid",".txt");
   const notes: NoteEvent[] = []; // La liste de notes
 
-  // La liste des ticks, ça servira popur savoir la scale que je peux appliquer
+  // La liste des ticks, ça servira pour savoir la scale que je peux appliquer
   const ticks: number[] = [];
 
   tracks.forEach((track) => {
@@ -74,7 +74,16 @@ export function writeFlyKeys(tracks: Track[], song: Song) {
   });
   orderNotesList(notes);
   const scale = getScale(ticks);
-  let fileContent = `${song.timebase};${scale}\n`;
+
+  const speed = Math.round((oneTickToMs*scale + Number.EPSILON) * 100) / 100
+
+  console.log({
+    scale : scale,
+    oneTickToMs : oneTickToMs,
+    speed : speed
+  });
+
+  let fileContent = `${song.timebase};${scale};${speed}\n`;
 
   notes.forEach((note) => {
     fileContent += `${note.noteNumber} ${note.tick/scale} ${(note.tick+note.duration)/scale} ${getStringFromColor(note.color)}\n`;
