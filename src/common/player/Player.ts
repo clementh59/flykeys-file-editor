@@ -276,4 +276,40 @@ export default class Player {
 
     this.syncPosition()
   }
+
+  /**
+   * It goes through the event list and look for tempo events.
+   * Foreach tempo, it get the corresponding tickToMs
+   * @return {Array<number> the list of possible tickToMs}
+   */
+  readAllThePossibleTickToMs(song: Song) {
+
+    const possibleTickToMs: Array<number> = [];
+    const possibleTickToMsUnique: Array<number> = [];
+
+    const events = collectAllEvents(song);
+    events.forEach((value) => {
+      const e = value;
+      if (e.type !== "channel" && "subtype" in e) {
+        switch (e.subtype) {
+          case "setTempo":
+            this._currentTempo = 60000000 / e.microsecondsPerBeat;
+            possibleTickToMs.push(this.tickToMillisec(1));
+            break
+          case "endOfTrack":
+            break
+          default:
+            break
+        }
+      }
+    });
+
+    possibleTickToMs.forEach((tToMs) => {
+      if (!possibleTickToMsUnique.includes(tToMs))
+        possibleTickToMsUnique.push(tToMs);
+    });
+
+    return possibleTickToMsUnique;
+  }
+
 }

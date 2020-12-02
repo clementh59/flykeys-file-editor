@@ -107,7 +107,17 @@ export const openFlykeysFile = (rootStore: RootStore) => (input: HTMLInputElemen
 
 export const saveFlyKeysFile = (rootStore: RootStore) => () => {
   const {song} = rootStore;
-  const oneTickToMs = rootStore.services.player.tickToMillisec(1);
+  let oneTickToMs = rootStore.services.player.tickToMillisec(1); // If no tempo is provided in the MIDI events, the default value will be taken
+  const oneTickToMsList = rootStore.services.player.readAllThePossibleTickToMs(rootStore.song);
+  if (oneTickToMsList.length > 1) { // if multiple tempo were provided in the MIDI events
+    alert('Il y a plusieurs timebase dans le fichier! La speed dans le fichier flykeys peut ne pas être la bonne.');
+  }  else if (oneTickToMsList.length === 1) { // if a single tempo event were provided in the MIDI events
+    oneTickToMs = oneTickToMsList[0];
+    console.log("Il y a un timebase event, je le prend en compte");
+    console.log(oneTickToMsList);
+  } else {
+    console.log("Il n'y a pas de timebase event");
+  }
   writeFlyKeys(toJS(song.tracks, { recurseEverything: true }), song, oneTickToMs)
 }
 
