@@ -83,7 +83,7 @@ export function writeFlyKeys(tracks: Track[], song: Song, oneTickToMs: number) {
     speed : speed
   });
 
-  let fileContent = `${scale};${speed}\n`;
+  let fileContent = `${song.timebase};${scale};${speed}\n`;
 
   notes.forEach((note) => {
     fileContent += `${note.noteNumber} ${note.tick/scale} ${(note.tick+note.duration)/scale} ${getStringFromColor(note.color)}\n`;
