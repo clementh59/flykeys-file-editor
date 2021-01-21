@@ -5,7 +5,7 @@ import {
   writeMidi
 } from "../../common/midi/SongFile"
 import Song, { emptySong } from "../../common/song"
-import { emptyTrack, isNoteEvent } from "../../common/track"
+import { emptyTrack, isNoteEvent, NoteEvent } from "../../common/track"
 import RootStore from "../stores/RootStore"
 import Color from "color"
 import { writeFlyKeys } from "../../common/flykeys/FlykeysFileFactory"
@@ -114,11 +114,59 @@ export const saveFlyKeysFile = (rootStore: RootStore) => () => {
   }  else if (oneTickToMsList.length === 1) { // if a single tempo event were provided in the MIDI events
     oneTickToMs = oneTickToMsList[0];
     console.log("Il y a un timebase event, je le prend en compte");
-    console.log(oneTickToMsList);
   } else {
     console.log("Il n'y a pas de timebase event");
   }
-  writeFlyKeys(toJS(song.tracks, { recurseEverything: true }), song, oneTickToMs)
+
+  if (!checkIfTheSongIsCompatibleWithFlykeys(song))
+    return;
+
+  writeFlyKeys(toJS(song.tracks, { recurseEverything: true }), song, oneTickToMs);
+}
+
+/**
+ * returns true if ok - false otherwise
+ * Pops an alert with the reason why it failed
+ * @param song
+ */
+const checkIfTheSongIsCompatibleWithFlykeys = (song: Song) => {
+  if (checkIfThereAreSuperpositionIssues(song)) {
+    alert('Il y a des problèmes de superposition!');
+    return false;
+  }
+
+  return true;
+}
+
+/**
+ * Check if there are superposition problem (at a certain tick, there are two notes on a key)
+ * return true if there is at least one - false otherwise
+ */
+const checkIfThereAreSuperpositionIssues = (song: Song) => {
+  const notes: Set<number>[] = []; // La liste de notes
+
+  // pour dire d'être large
+  for (let i = 0; i < 300; i++) {
+    notes.push(new Set());
+  }
+
+  let error = false;
+
+  song.tracks.forEach((track) => {
+    track.events.filter(isNoteEvent).forEach((note)=>{
+      for (let i = note.tick; i < note.tick + note.duration; i++) {
+        if (!notes[note.noteNumber].has(i)) {
+          notes[note.noteNumber].add(i);
+        } else {
+          console.log('Superposition with key : ' + note.noteNumber + ', tick : ' + note.tick);
+          error = true;
+          return;
+        }
+      }
+    });
+  });
+
+  return error;
 }
 
 export const addTrack = (rootStore: RootStore) => () => {
