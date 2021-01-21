@@ -59,11 +59,12 @@ const PianoNotes: FC<PianoNotesProps> = ({ trackId, width, isGhost }) => {
             isSelected,
             isDrum: isRhythmTrack,
             color: e.color,
+            hasError: e.hasError,
           }
         }
       ),
     [events, transform, scrollLeft, width, selection, isGhost, isRhythmTrack]
-  )
+  );
 
   const items = useRecycle(notes).map((item) => {
     return (

@@ -41,7 +41,8 @@ export function assemble<T>(
               id: -1,
               tick: noteOn.tick,
               duration: e.tick - noteOn.tick,
-              color: RightHandColor
+              color: RightHandColor,
+              hasError: false
             }
             result.push(note)
           }

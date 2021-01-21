@@ -157,9 +157,11 @@ const checkIfThereAreSuperpositionIssues = (song: Song) => {
       for (let i = note.tick; i < note.tick + note.duration; i++) {
         if (!notes[note.noteNumber].has(i)) {
           notes[note.noteNumber].add(i);
+          note.hasError = false;
         } else {
           console.log('Superposition with key : ' + note.noteNumber + ', tick : ' + note.tick);
           error = true;
+          note.hasError = true;
           return;
         }
       }

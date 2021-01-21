@@ -49,6 +49,7 @@ export type NoteEvent = TrackEventRequired &
     noteNumber: number
     velocity: number
     color: Color
+    hasError: boolean
   }
 
 export type TrackMidiEvent =

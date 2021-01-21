@@ -263,7 +263,8 @@ export default class Player {
     if (this._scheduler.currentTick >= this._song.endOfSong) {
       this.stop()
     } else {
-      const currentTick = this._scheduler.currentTick
+      const currentTick = this._scheduler.currentTick;
+      console.log('current tick' + currentTick);
 
       if (
         this.loop.enabled &&

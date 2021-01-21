@@ -45,6 +45,7 @@ export function songFromFlykeys(data: string) {
         velocity: 100,
         noteNumber: key,
         color:getColorFromString(color),
+        hasError: false
       });
     }
   });

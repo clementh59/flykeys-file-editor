@@ -10,7 +10,8 @@ export type PianoNoteItem = IRect & {
   velocity: number
   isSelected: boolean
   isDrum: boolean
-  color: Color
+  color: Color,
+  hasError: boolean
 }
 
 export interface PianoNoteProps {
@@ -57,7 +58,7 @@ const _PianoNote: FC<PianoNoteProps> = (props) => {
       : props.borderColor
 
     g.clear()
-      .lineStyle(1, lineColor, alpha)
+      .lineStyle(item.hasError? 4 : 1, item.hasError? Color('red').rgbNumber() : lineColor, alpha)
       .beginFill(noteColor, alpha)
       .drawRect(0, 0, width, height)
       .endFill()
@@ -70,7 +71,7 @@ const _PianoNote: FC<PianoNoteProps> = (props) => {
     const radius = Math.round(item.height / 2)
 
     g.clear()
-      .lineStyle(1, props.borderColor, 1)
+      .lineStyle(item.hasError? 3 : 1, item.hasError? Color('red').rgbNumber() : props.borderColor, 1)
       .beginFill(noteColor, alpha)
       .drawCircle(0, radius / 2, radius)
   }

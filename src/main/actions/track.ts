@@ -210,7 +210,8 @@ export const createNote = (rootStore: RootStore) => (
     color: rootStore.settingsStore.defaultNoteColor,
     tick,
     velocity: 127,
-    duration: pianoRollStore.lastNoteDuration || quantizer.unit
+    duration: pianoRollStore.lastNoteDuration || quantizer.unit,
+    hasError: false
   }
   const added = selectedTrack.addEvent(note)
 
