@@ -19,7 +19,6 @@ RPN は種類、値を表す2～4つのイベントからなるが、
 */
 export function assemble<T>(events: (T | ControllerEvent)[]): (T | RPNEvent)[] {
   const result: (T | RPNEvent)[] = []
-
   // ひとつにまとめた RPN イベントを作成する
   function createCC(
     rpnMSB: ControllerEvent,
@@ -63,28 +62,33 @@ export function assemble<T>(events: (T | ControllerEvent)[]): (T | RPNEvent)[] {
 
   for (let i = 0; i < events.length; i++) {
     const e = events[i]
-    if (isRPNMSB(e)) {
-      const j = i
-      const getNextIf = (
-        event: T | ControllerEvent,
-        test: (e: T | ControllerEvent) => boolean
-      ) => {
-        if (test(event)) {
-          i++ // skip this event
-          return event
+    try {
+      if (isRPNMSB(e)) {
+        const j = i
+        const getNextIf = (
+          event: T | ControllerEvent,
+          test: (e: T | ControllerEvent) => boolean
+        ) => {
+          if (test(event)) {
+            i++ // skip this event
+            return event
+          }
+          return null
         }
-        return null
-      }
-      result.push(
-        createCC(
-          e as ControllerEvent,
-          getNextIf(events[j + 1], isRPNLSB) as ControllerEvent,
-          getNextIf(events[j + 2], isDataMSB) as ControllerEvent,
-          getNextIf(events[j + 3], isDataLSB) as ControllerEvent
+        result.push(
+          createCC(
+            e as ControllerEvent,
+            getNextIf(events[j + 1], isRPNLSB) as ControllerEvent,
+            getNextIf(events[j + 2], isDataMSB) as ControllerEvent,
+            getNextIf(events[j + 3], isDataLSB) as ControllerEvent
+          )
         )
-      )
-    } else {
-      result.push(e)
+      } else {
+        result.push(e)
+      }
+    } catch(e) {
+      console.log('Error when reading midi event:');
+      console.log(e);
     }
   }
   return result

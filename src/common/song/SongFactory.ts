@@ -29,7 +29,7 @@ const trackFromMidiEvents = (events: AnyEvent[]): Track => {
 
 export function songFromMidi(data: StreamSource) {
   const song = new Song()
-  const midi = readMidi(data)
+  const midi = readMidi(data);
 
   midi.tracks.map(trackFromMidiEvents).map((track) => song.addTrack(track))
   song.selectedTrackId = 1
